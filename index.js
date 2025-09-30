@@ -29,6 +29,17 @@ app.get("/api/persons", (request, response) => {
   response.status(200).json(persons);
 });
 
+app.get("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  const person = persons.find((person) => person.id === id);
+
+  if (person) {
+    response.status(200).json(person);
+  } else {
+    response.status(404).end();
+  }
+});
+
 app.get("/info", (request, response) => {
   const actualTimeDate = new Date();
   let infoHtml = `<p>Phonebook has info for ${persons.length} people.</p>`;
