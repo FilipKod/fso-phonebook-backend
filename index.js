@@ -29,6 +29,13 @@ app.get("/api/persons", (request, response) => {
   response.status(200).json(persons);
 });
 
+app.get("/info", (request, response) => {
+  const actualTimeDate = new Date();
+  let infoHtml = `<p>Phonebook has info for ${persons.length} people.</p>`;
+  infoHtml += `<p>${actualTimeDate}</p>`;
+  response.send(infoHtml);
+});
+
 app.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT}`);
 });
