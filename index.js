@@ -50,6 +50,20 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
+  if (!request.body.name) {
+    return response.status(400).json({ error: "name is missing" });
+  }
+
+  if (!request.body.number) {
+    return response.status(400).json({ error: "number is missing" });
+  }
+
+  const person = persons.find((p) => p.name === request.body.name);
+
+  if (person) {
+    return response.status(409).json({ error: "name is already exists" });
+  }
+
   const maxId = Math.max(...persons.map((p) => p.id));
 
   const body = {
