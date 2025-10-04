@@ -1,7 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 morgan.token("body", (req) => {
   return JSON.stringify(req.body);
@@ -93,6 +92,7 @@ app.get("/info", (request, response) => {
   response.send(infoHtml);
 });
 
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT}`);
 });
