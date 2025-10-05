@@ -1,5 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
+const Person = require("./models/person");
+
 const app = express();
 
 morgan.token("body", (req) => {
@@ -12,31 +15,10 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 app.get("/api/persons", (request, response) => {
-  response.status(200).json(persons);
+  Person.find({}).then((persons) => {
+    response.status(200).json(persons);
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
@@ -58,31 +40,30 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
-  if (!request.body.name) {
+  const { name, number } = request.body;
+
+  if (!name) {
     return response.status(400).json({ error: "name is missing" });
   }
 
-  if (!request.body.number) {
+  if (!number) {
     return response.status(400).json({ error: "number is missing" });
   }
 
-  const person = persons.find((p) => p.name === request.body.name);
+  // const person = persons.find((p) => p.name === request.body.name);
 
-  if (person) {
-    return response.status(409).json({ error: "name is already exists" });
-  }
+  // if (person) {
+  //   return response.status(409).json({ error: "name is already exists" });
+  // }
 
-  const maxId = Math.max(...persons.map((p) => p.id));
+  const person = new Person({
+    name,
+    number,
+  });
 
-  const body = {
-    id: String(maxId + 1),
-    name: request.body.name,
-    number: request.body.number,
-  };
-
-  persons = persons.concat(body);
-
-  response.status(200).json(body);
+  person.save().then((person) => {
+    response.status(200).json(person);
+  });
 });
 
 app.get("/info", (request, response) => {
@@ -92,7 +73,7 @@ app.get("/info", (request, response) => {
   response.send(infoHtml);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT}`);
 });
