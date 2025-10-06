@@ -61,20 +61,25 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({ error: "number is missing" });
   }
 
-  // const person = persons.find((p) => p.name === request.body.name);
+  Person.findOne({ name })
+    .then((person) => {
+      if (person) {
+        return response.status(409).json({ error: "name is already exists" });
+      } else {
+        const createPerson = new Person({
+          name,
+          number,
+        });
 
-  // if (person) {
-  //   return response.status(409).json({ error: "name is already exists" });
-  // }
-
-  const person = new Person({
-    name,
-    number,
-  });
-
-  person.save().then((person) => {
-    response.status(200).json(person);
-  });
+        createPerson
+          .save()
+          .then((person) => {
+            response.status(201).json(person);
+          })
+          .catch((error) => next(error));
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/info", (request, response) => {
