@@ -82,6 +82,22 @@ app.post("/api/persons", (request, response) => {
     .catch((error) => next(error));
 });
 
+app.put("/api/persons/:id", (request, response, next) => {
+  const { number } = request.body;
+
+  if (!number) return response.status(422).json({ error: "missing number" });
+
+  Person.findByIdAndUpdate(
+    request.params.id,
+    {
+      number,
+    },
+    { new: true }
+  ).then((updatedPerson) => {
+    return response.status(202).json(updatedPerson);
+  });
+});
+
 app.get("/info", (request, response) => {
   const actualTimeDate = new Date();
   let infoHtml = `<p>Phonebook has info for ${persons.length} people.</p>`;
