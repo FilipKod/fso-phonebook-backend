@@ -106,11 +106,19 @@ app.put("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.get("/info", (request, response) => {
-  const actualTimeDate = new Date();
-  let infoHtml = `<p>Phonebook has info for ${persons.length} people.</p>`;
-  infoHtml += `<p>${actualTimeDate}</p>`;
-  response.send(infoHtml);
+app.get("/info", (request, response, next) => {
+  Person.find({})
+    .then((persons) => {
+      const actualTimeDate = new Date();
+
+      let infoHtml = `<p>Phonebook has info for ${persons.length} ${
+        persons.length === 1 ? "persons" : "people"
+      }.</p>`;
+      infoHtml += `<p>${actualTimeDate}</p>`;
+
+      response.send(infoHtml);
+    })
+    .catch((error) => next(error));
 });
 
 app.use(errorHandler);
