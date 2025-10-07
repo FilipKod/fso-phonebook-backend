@@ -25,10 +25,12 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-app.get("/api/persons", (request, response) => {
-  Person.find({}).then((persons) => {
-    response.status(200).json(persons);
-  });
+app.get("/api/persons", (request, response, next) => {
+  Person.find({})
+    .then((persons) => {
+      response.status(200).json(persons);
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/api/persons/:id", (request, response, next) => {
@@ -52,7 +54,7 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const { name, number } = request.body;
 
   if (!name) {
@@ -66,7 +68,9 @@ app.post("/api/persons", (request, response) => {
   Person.findOne({ name })
     .then((person) => {
       if (person) {
-        return response.status(409).json({ error: "name is already exists" });
+        return response
+          .status(409)
+          .json({ error: "name is already exists", personId: person._id });
       } else {
         const createPerson = new Person({
           name,
@@ -95,9 +99,11 @@ app.put("/api/persons/:id", (request, response, next) => {
       number,
     },
     { new: true }
-  ).then((updatedPerson) => {
-    return response.status(202).json(updatedPerson);
-  });
+  )
+    .then((updatedPerson) => {
+      return response.status(202).json(updatedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/info", (request, response) => {
