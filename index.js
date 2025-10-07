@@ -34,7 +34,12 @@ app.get("/api/persons", (request, response) => {
 app.get("/api/persons/:id", (request, response, next) => {
   Person.findById(request.params.id)
     .then((person) => {
-      response.status(200).json(person);
+      console.log(person);
+      if (person) {
+        response.status(200).json(person);
+      } else {
+        response.status(404).end();
+      }
     })
     .catch((error) => next(error));
 });
