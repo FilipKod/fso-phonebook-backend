@@ -7,7 +7,8 @@
     "start": "node index.js",
     "dev": "node --watch index.js",
     "build:ui": "rm -rf dist && cd ../fso-phonebook-frontend && pnpm run build && cp -r dist ../fso-phonebook-backend",
-    "deploy:full": "pnpm run build:ui && git add . && git commit -m 'ui build' && git push"
+    "deploy:full": "pnpm run build:ui && git add . && git commit -m 'ui build' && git push",
+    "lint": "eslint ."
   },
   "author": "Filip Madunicky",
   "license": "MIT",
@@ -17,5 +18,11 @@
     "express": "^5.1.0",
     "mongoose": "^8.19.0",
     "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.37.0",
+    "@stylistic/eslint-plugin-js": "^4.4.1",
+    "eslint": "^9.37.0",
+    "globals": "^16.4.0"
   }
 }
