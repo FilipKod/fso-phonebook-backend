@@ -18,7 +18,16 @@ const personSchema = new mongose.Schema({
     minLength: [3, "User must contain at least 3 characters"],
     required: true,
   },
-  number: String,
+  number: {
+    type: String,
+    minLength: 8,
+    validate: {
+      validator: (value) => {
+        return /\d{2,3}-\d*$/.test(value);
+      },
+      message: (props) => `${props.value} is not a valid phone number`,
+    },
+  },
 });
 
 personSchema.set("toJSON", {
